@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '../Firebase';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Login.css';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { firestore } from '../Firebase';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -19,6 +21,35 @@ const Login = () => {
       navigate('/home'); // Esempio di redirezione
     } catch (error) {
       setError('Errore nell\'autenticazione: ' + error.message);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // Verifica se l'utente è già presente nel Firestore
+      const userDocRef = doc(firestore, 'users', user.uid);
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (!userDocSnap.exists()) {
+        // Se l'utente è nuovo, aggiungilo a Firestore
+        const signUpDate = new Date();
+        const [firstName, lastName] = user.displayName.split(' ');
+
+        await setDoc(userDocRef, {
+          firstName,
+          lastName,
+          email: user.email,
+          signUpDate, // Aggiungi la data di iscrizione
+        });
+      }
+
+      navigate('/home'); // Esempio di redirezione
+    } catch (error) {
+      setError('Errore nell\'autenticazione con Google: ' + error.message);
     }
   };
 
@@ -55,6 +86,13 @@ const Login = () => {
           </div>
           <button type="submit" className="login-button">Login</button>
         </form>
+
+        <div className="separator">Oppure</div>
+
+        <button onClick={handleGoogleSignIn} className="google-signin-button">
+          <img src="https://th.bing.com/th/id/R.16597b58fb4d4fa8ebcf5a013fc19b0a?rik=a0DcRRp3bMzLow&pid=ImgRaw&r=0" alt="Google icon" />
+        </button>
+
         <p className="signup-text">Non hai un account? <a href="/register">Registrati qui</a></p>
       </div>
     </div>

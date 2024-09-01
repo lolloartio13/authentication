@@ -38,7 +38,7 @@ const Register = () => {
         signUpDate, // Aggiungi la data di iscrizione
       });
 
-      navigate('/login');
+      navigate('/');
     } catch (error) {
       setError('Errore nella registrazione: ' + error.message);
     }

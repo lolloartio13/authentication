@@ -38,12 +38,12 @@ function Home() {
 
   return (
     <div className="user-profile-container">
+      <button onClick={handleLogout}>Log out</button>
       {userData ? (
         <div>
           <h1>Ciao, {userData.firstName} {userData.lastName}!</h1>
           <p>Email: {userData.email}</p>
           <p>Data di iscrizione: {userData.signUpDate.toDate().toLocaleDateString()}</p>
-          <button onClick={handleLogout}>Log out</button>
         </div>
       ) : (
         <div className="spinner"></div>

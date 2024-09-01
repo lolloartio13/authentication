@@ -10,9 +10,10 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path='/' element={<PrivateRoute><Home></Home></PrivateRoute>}></Route>
         <Route path='/login' element={<Login></Login>}></Route>
         <Route path='/register' element={<Register></Register>}></Route>
-        <Route path='home' element={<PrivateRoute><Home></Home></PrivateRoute>}></Route>
+        <Route path='/home' element={<PrivateRoute><Home></Home></PrivateRoute>}></Route>
       </Routes>
     </BrowserRouter>
   );
